@@ -13,7 +13,7 @@ export class StubCodexClient implements CodexClient {
     for (const file of parseUnifiedDiff(request.diff)) {
       for (const [lineNumber, line] of file.addedLines) {
         const normalized = line.toLowerCase();
-        if (/(password|secret|token)\s*=(?!=)/.test(normalized) || /password/.test(normalized) && /["']/.test(line)) {
+        if (/\b\w*(password|secret|token)\w*\s*=(?!=)\s*["']/.test(normalized)) {
           findings.push({
             file: file.path,
             startLine: lineNumber,

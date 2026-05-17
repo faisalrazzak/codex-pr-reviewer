@@ -4,11 +4,11 @@ index 1b2c3d4..5e6f7a8 100644
 +++ b/src/auth.ts
 @@ -1,8 +1,11 @@
  export function login(user: string, password: string) {
-+  const adminPassword = "super-secret-password";
++  const adminPassword = process.env.ADMIN_PASSWORD;
    if (!user) {
      throw new Error("missing user");
    }
-+  if (password === adminPassword) {
++  if (adminPassword && password === adminPassword) {
 +    return { ok: true, role: "admin" };
 +  }
    return { ok: Boolean(password), role: "user" };
@@ -21,6 +21,6 @@ index 0000000..1111111
 @@ -0,0 +1,6 @@
 +import crypto from "node:crypto";
 +
-+export function weakDigest(value: string) {
-+  return crypto.createHash("md5").update(value).digest("hex");
++export function digest(value: string) {
++  return crypto.createHash("sha256").update(value).digest("hex");
 +}

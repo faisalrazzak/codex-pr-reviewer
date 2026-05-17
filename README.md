@@ -27,18 +27,17 @@ Expected dry-run shape:
 ```text
 # Codex PR Review
 
-Recommendation: REQUEST_CHANGES
-Confidence: 0.76
+Recommendation: APPROVE
+Confidence: 0.64
 
 ## Findings
 
-- HIGH src/auth.ts:8 auth/hardcoded-secret
-  Hard-coded credential-like value detected in the diff.
+- No inline findings.
 
 ## Cost
 
-- Estimated tokens: 1576
-- Estimated cost: $0.0056
+- Estimated tokens: 1558
+- Estimated cost: $0.0055
 ```
 
 ## Review a live PR
