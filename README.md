@@ -1,8 +1,8 @@
 # codex-pr-reviewer
 
-Codex PR Reviewer is a TypeScript CLI and GitHub Action scaffold for high-signal pull request review. This first milestone implements the M1 slice from the PRD: fetch a pull request diff, build a small project context pack, redact secrets, run a deterministic stub reviewer, and print a dry-run review to stdout.
+Codex PR Reviewer is a TypeScript CLI and GitHub Action scaffold for high-signal pull request review. The current M2 slice fetches pull request diffs, builds a small project context pack, redacts secrets, calls Codex/OpenAI with structured JSON output, and publishes inline GitHub review comments plus a summary comment.
 
-The later milestones plug the same pipeline into a real Codex client, GitHub inline review comments, budget enforcement status checks, and an eval bench.
+The later milestones add deeper cost enforcement, richer calibration, and a full eval bench.
 
 ## What works today
 
@@ -11,8 +11,10 @@ The later milestones plug the same pipeline into a real Codex client, GitHub inl
 - Project context pack from README, CODEOWNERS, ADR files, and changed files marked with `codex-review: load-me`.
 - Secret redaction before prompt construction.
 - Budget estimation with fail-soft `BUDGET_EXCEEDED` output.
-- Stub Codex client that emits deterministic findings for risky patterns.
-- Vitest coverage for config parsing, secret redaction, and review orchestration.
+- OpenAI Responses API structured outputs with Codex CLI fallback support.
+- GitHub Reviews API inline comments plus a top-level summary comment.
+- Stub reviewer for deterministic local dry-runs.
+- Vitest coverage for config parsing, response validation, GitHub publishing, secret redaction, and review orchestration.
 
 ## Quick start
 
@@ -36,17 +38,29 @@ Confidence: 0.64
 
 ## Cost
 
-- Estimated tokens: 1558
-- Estimated cost: $0.0055
+- Estimated tokens: 1744
+- Estimated cost: $0.0059
 ```
 
-## Review a live PR
+## Review a live PR locally
 
 ```bash
-GITHUB_TOKEN=ghp_... pnpm dev -- review --repo owner/repo --pull 123
+GITHUB_TOKEN=ghp_... OPENAI_API_KEY=sk_... pnpm dev -- review --repo owner/repo --pull 123
 ```
 
-For now this prints the review instead of posting comments. GitHub Reviews API posting is the M2 milestone.
+This posts inline review comments through the GitHub Reviews API and creates a summary issue comment. For debugging without publishing, add `--no-post`. For deterministic local output, use `--client stub`.
+
+Client selection:
+
+- `--client auto`: use Codex CLI when available, otherwise OpenAI Responses API.
+- `--client codex`: force `codex exec --json` with an output schema.
+- `--client openai`: force direct OpenAI Responses API.
+- `--client stub`: use deterministic local heuristics.
+
+Mode selection:
+
+- `--mode review`: comment-only review, with approval recommendation in the summary.
+- `--mode gate`: request changes when the model recommendation is `REQUEST_CHANGES`.
 
 ## Install on your repo
 
@@ -73,6 +87,7 @@ jobs:
           mode: review
           model: gpt-5.4
           budget_usd: "3.00"
+          client: auto
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 ```
