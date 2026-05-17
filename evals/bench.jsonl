@@ -1,0 +1,1 @@
+{"id":"fixture-hardcoded-secret","repo":"fixture/local","pull":1,"expected_findings":[{"file":"src/auth.ts","category":"auth","severity":"high","ruleId":"auth/hardcoded-secret"}],"expected_recommendation":"REQUEST_CHANGES"}

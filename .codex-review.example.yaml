@@ -1,0 +1,6 @@
+focus_areas: [crypto, identity, supply_chain]
+tone: terse
+severity_threshold: medium
+ignore_paths: ["docs/**", "**/*.md"]
+budget_usd: 3.00
+per_file_comment_cap: 5

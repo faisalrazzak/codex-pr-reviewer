@@ -1,0 +1,40 @@
+name: Codex PR Reviewer
+description: Review pull requests with a Codex-powered CLI.
+inputs:
+  mode:
+    description: Run as a comment-only reviewer or a future gate.
+    default: review
+    required: false
+  model:
+    description: OpenAI/Codex model name.
+    default: gpt-5.4
+    required: false
+  budget_usd:
+    description: Maximum estimated spend per PR.
+    default: "3.00"
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Install pnpm
+      shell: bash
+      run: corepack enable pnpm
+    - name: Install reviewer
+      shell: bash
+      run: pnpm install --frozen-lockfile
+      working-directory: ${{ github.action_path }}
+    - name: Build reviewer
+      shell: bash
+      run: pnpm build
+      working-directory: ${{ github.action_path }}
+    - name: Run Codex PR reviewer
+      shell: bash
+      run: >
+        node "${{ github.action_path }}/dist/index.js" review
+        --repo "${{ github.repository }}"
+        --pull "${{ github.event.pull_request.number }}"
+        --model "${{ inputs.model }}"
+        --budget-usd "${{ inputs.budget_usd }}"
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}

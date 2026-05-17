@@ -1,0 +1,33 @@
+{
+  "name": "codex-pr-reviewer",
+  "version": "0.1.0",
+  "description": "A Codex-powered pull request auto-review CLI and GitHub Action.",
+  "type": "module",
+  "bin": {
+    "codex-pr-reviewer": "./dist/index.js"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "dry-run": "tsx src/index.ts dry-run --fixture fixtures/sample-pr.diff",
+    "evals": "tsx src/evals.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.1.1",
+    "minimatch": "^10.0.1",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
